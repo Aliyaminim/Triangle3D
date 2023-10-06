@@ -1,10 +1,10 @@
 #include "gtest/gtest.h"
-#include "header.hpp"
+#include "primitives.hpp"
 
 float flt_tolerance = 0.00001;
 
 TEST(TestClassPointt, TestValid) {
-    Point_t p;
+    Point_t p{};
     ASSERT_TRUE(std::isnan(p.x));
 }
 
