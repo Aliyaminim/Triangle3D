@@ -10,4 +10,4 @@ enable_testing()
 add_subdirectory(googletest)
 add_subdirectory(test)
 
-#add_executable(main main.cpp header.hpp)
+add_executable(main main.cpp)

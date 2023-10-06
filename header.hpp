@@ -18,9 +18,7 @@
 #include <cmath>
 #include <array>
 
-
-//replace macros
-#define flt_tolerance 0.00001
+extern double flt_tolerance;
 //#define inter_area_width 100.0
 
 class Point_t {
