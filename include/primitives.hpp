@@ -73,10 +73,29 @@ public:
 };
 
 class Triangle_t {
+    void getNormal(const Point_t &v1_, const Point_t &v2_, const Point_t &v3_, std::array<float, 3>::iterator normal_it) {
+        float vec12[3] = {v2_.x - v1.x, v2_.y - v1_.y, v2_.z - v1_.z}; 
+        float vec13[3] = {v3_.x - v1.x, v3_.y - v1_.y, v3_.z - v1_.z}; 
+        float normal[3];
+        normal[0] = vec12[1]*vec13[2] - vec12[2]*vec13[1];
+        normal[1] = vec12[2]*vec13[0] - vec12[0]*vec13[2];
+        normal[2] = vec12[0]*vec13[1] - vec12[1]*vec13[0];
+        float len = std::pow(normal[0]*normal[0] + normal[1]*normal[1] + normal[2] * normal[2], 0.5);
+
+        for (int i = 0; i < 3; ++i) {
+            *normal_it = normal[i] / len;
+            ++normal_it;
+        }
+    }
 public:
-    Point_t v1, v2, v3;
+    Point_t v1, v2, v3; 
+    std::array<float, 3> normal{NAN, NAN, NAN};
+
     //constructor
     explicit Triangle_t(const Point_t &v1_, const Point_t &v2_, const Point_t &v3_) : v1(v1_), v2(v2_),
-                                                                             v3(v3_) {}
+                                                                             v3(v3_) {       
+        getNormal(v1_, v2_, v3_, normal.begin());
+    }
+
     bool valid() const { return (v1.valid() && v2.valid() && v3.valid());}
 };
