@@ -17,8 +17,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <array>
+#include "floatcompar.hpp"
 
-extern float flt_tolerance;
 //#define inter_area_width 100.0
 
 class Point_t {
@@ -36,19 +36,14 @@ public:
     bool equal (const Point_t &rhs) const {
         assert(valid() && rhs.valid());
         
-        //relative epsilon comparisons
-        auto diff_x = std::abs(x - rhs.x);
-        auto diff_y = std::abs(y - rhs.y);
-        auto diff_z = std::abs(z - rhs.z);
-
-        if ((diff_x < flt_tolerance) && (diff_y < flt_tolerance) && (diff_z < flt_tolerance))
+        if (float_comparator(x, rhs.x) != 0)
+            return false;
+        else if (float_comparator(y, rhs.y) != 0)
+            return false;
+        else if (float_comparator(z, rhs.z) != 0)
+            return false;
+        else
             return true;
-        else {
-            bool cond_x = (diff_x < std::max(std::abs(x), std::abs(rhs.x)) * flt_tolerance);
-            bool cond_y = (diff_y < std::max(std::abs(y), std::abs(rhs.y)) * flt_tolerance);
-            bool cond_z = (diff_z < std::max(std::abs(z), std::abs(rhs.z)) * flt_tolerance);
-            return (cond_x && cond_y && cond_z);
-        }
     }
 
     void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }

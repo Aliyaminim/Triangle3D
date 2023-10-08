@@ -2,8 +2,6 @@
 #include "primitives.hpp"
 #include "geotools.hpp"
 
-float flt_tolerance = 0.00001;
-
 TEST(TestClassPointt, TestValid) {
     Point_t p{};
     ASSERT_TRUE(std::isnan(p.x));
