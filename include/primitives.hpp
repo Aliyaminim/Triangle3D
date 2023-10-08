@@ -56,7 +56,7 @@ public:
 
 class Line_t {
     Point_t r0;
-    std::array<float, 3> drc_vec{NAN, NAN, NAN};
+    std::array<float, 3> drc_vec;
 
 public:
     //constructor, is line direction strict, copy of point_t, 
@@ -67,7 +67,7 @@ public:
     } 
 
     bool valid() const {
-        return !((!r0.valid()) || std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
+        return r0.valid() && !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
                                || std::isnan(drc_vec[2]));
     }
 };
