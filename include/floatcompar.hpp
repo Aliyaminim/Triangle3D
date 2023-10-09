@@ -15,3 +15,15 @@ int float_comparator(float a, float b) {
     else if (a > b)
         return -1;
 }
+
+bool is_zero(float a) {
+    return (float_comparator(a, 0) == 0);    
+}
+
+bool greater(float a, float b) {
+    return (float_comparator(a, b) == -1);
+}
+
+bool less(float a, float b) {
+    return (float_comparator(a,b) == 1);
+}

@@ -7,7 +7,7 @@
 // |Dx-Bx Dy-By Dz-Bz|
 // |Dx-Cx Dy-Cy Dz-Cz|
 float determinant3x3(Point_t &A, Point_t &B, Point_t &C, Point_t &D) {
-	assert(valid(A) && valid(B) && valid(C) && valid(D));
+	assert(A.valid() && B.valid() && C.valid() && D.valid());
     
 	float det = (D.x - A.x) * ((D.y - B.y)*(D.z - C.z) - (D.z - B.z)*(D.y - C.y));
 	det += (D.y - A.y) * ((D.z - B.z)*(D.x - C.x) - (D.x - B.x)*(D.z - C.z));
