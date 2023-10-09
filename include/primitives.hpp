@@ -29,7 +29,7 @@ public:
     explicit Point_t(float x_, float y_, float z_): x(x_), y(y_), z(z_) {} 
     Point_t() = default;
 
-    //operator =
+    //operator = default
 
     bool valid() const { return !(std::isnan(x) || std::isnan(y) || std::isnan(z)); }
 
