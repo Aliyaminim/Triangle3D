@@ -90,6 +90,42 @@ void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
     }*/
 }
 
+bool SegmentTriangleIntersect(Triangle_t &tr, Line_t &line) {
+    /* parametric representation of line = barycentric coordinates of any point in triangle
+                            P + t * vec(d) = (1 − (u + v))* V1 + u * V2 + v * V3  */
+    Line_t e1(tr.v1, tr.v2);
+    Line_t e2(tr.v1, tr.v3);
+
+    Line_t p = line.cross(e2);
+    float tmp = p.dot(e1);
+
+    if (is_zero(tmp))
+        return false;
+
+
+    tmp = 1 / tmp;
+    Line_t s (tr.v1, line.r0);
+    float u = tmp * s.dot(p);
+    if (less(u, 0) || greater(u, 1))
+        return false;
+    
+    Line_t q = s.cross(e1);
+    float v = tmp * line.dot(q);
+    if (less(v, 0) || greater(u, 1))
+        return false;
+
+    float t = tmp * e2.dot(q);
+
+    float x_ = line.r0.x + t * line.drc_vec[0];
+    float y_ = line.r0.y + t * line.drc_vec[1];
+    float z_ = line.r0.z + t * line.drc_vec[2];
+
+    Point_t intersection_point(x_, y_, z_);
+
+    return true; //return intersection_point;
+
+}
+
 //looks up if intersection between two triangles happens
 bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
     if (!boundingboxes_overlap(tr1, tr2))
@@ -110,9 +146,7 @@ bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
 
     //make_consistentTriangleOrientation(tr1, tr2);  maybe useful
 
-
     //under construction
 
-
+    return false;
 }
-

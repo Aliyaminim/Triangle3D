@@ -41,21 +41,42 @@ public:
     void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
 };
 
-class Line_t {
+class Line_t { //also using this class for segments and vectors
+
+public:
     Point_t r0;
     std::array<float, 3> drc_vec;
 
-public:
-    //constructor, is line direction strict, copy of point_t, 
+    //constructor
     explicit Line_t(const Point_t &p1, const Point_t &p2): r0(p1) {
         drc_vec[0] = p2.x - p1.x;
         drc_vec[1] = p2.y - p1.y;
         drc_vec[2] = p2.z - p1.z;
     } 
 
+    //constructor mostly for vectors
+    explicit Line_t(float x, float y, float z) {
+        drc_vec[0] = x;
+        drc_vec[1] = y;
+        drc_vec[2] = z;
+    }
+
     bool valid() const {
         return r0.valid() && !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
                                || std::isnan(drc_vec[2]));
+    }
+
+    Line_t cross(const Line_t &line) {
+        float x = drc_vec[1] * line.drc_vec[2] - drc_vec[2] * line.drc_vec[1];
+        float y = drc_vec[2] * line.drc_vec[0] - drc_vec[0] * line.drc_vec[2];
+        float z = drc_vec[0] * line.drc_vec[1] - drc_vec[1] * line.drc_vec[0];
+
+        Line_t res(x, y, z);
+        return res;
+    }
+
+    float dot(const Line_t &line) {
+        return (drc_vec[0] * line.drc_vec[0]) + (drc_vec[1] * line.drc_vec[1]) + (drc_vec[2] * line.drc_vec[2]);
     }
 };
 
