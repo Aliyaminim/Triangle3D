@@ -20,6 +20,10 @@ bool is_zero(float a) {
     return (float_comparator(a, 0) == 0);    
 }
 
+bool equal(float a, float b) {
+    return (float_comparator(a,b) == 0);
+}
+
 bool greater(float a, float b) {
     return (float_comparator(a, b) == -1);
 }

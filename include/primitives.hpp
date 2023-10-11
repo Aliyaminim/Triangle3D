@@ -33,17 +33,9 @@ public:
 
     bool valid() const { return !(std::isnan(x) || std::isnan(y) || std::isnan(z)); }
 
-    bool equal (const Point_t &rhs) const {
-        assert(valid() && rhs.valid());
-        
-        if (float_comparator(x, rhs.x) != 0)
-            return false;
-        else if (float_comparator(y, rhs.y) != 0)
-            return false;
-        else if (float_comparator(z, rhs.z) != 0)
-            return false;
-        else
-            return true;
+    bool equal_point (const Point_t &rhs) const {
+        assert(valid() && rhs.valid());      
+        return (equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z));
     }
 
     void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
