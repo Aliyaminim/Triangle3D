@@ -10,5 +10,8 @@ enable_testing()
 add_subdirectory(googletest)
 add_subdirectory(test)
 
+#add_subdirectory(src)
 add_executable(main ./src/main.cpp)
 target_include_directories(main PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+#add_executable(prim ./include/primitives.cpp)

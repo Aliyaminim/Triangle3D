@@ -85,6 +85,7 @@ class Triangle_t {
 public:
     Point_t v1, v2, v3; 
     std::array<float, 3> normal;
+    std::array<float, 3> vdistance; //contains distances between this vertices and other triangle's plane
 
     //constructor
     explicit Triangle_t(const Point_t &v1_, const Point_t &v2_, const Point_t &v3_) : v1(v1_), v2(v2_),

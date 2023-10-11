@@ -12,7 +12,7 @@ int float_comparator(float a, float b) {
         return 0;
     else if (a < b)
         return 1;
-    else if (a > b)
+    else
         return -1;
 }
 
@@ -24,6 +24,14 @@ bool greater(float a, float b) {
     return (float_comparator(a, b) == -1);
 }
 
+bool greater_equal(float a, float b) {
+    return ((float_comparator(a,b) == -1) || (float_comparator(a,b) == 0));
+}
+
 bool less(float a, float b) {
     return (float_comparator(a,b) == 1);
+}
+
+bool less_equal(float a, float b) {
+    return ((float_comparator(a,b) == 1) || (float_comparator(a,b) == 0));
 }
