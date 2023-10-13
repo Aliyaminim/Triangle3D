@@ -1,28 +1,23 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <unordered_map>
 #include "primitives.hpp"
 #include "geotools.hpp"
+#include "tools.hpp"
 
 int main() {
     std::pair<int, std::vector<double>> input; 
-
-    std::cin >> input.first; //number of triangles
-    assert(std::cin.good());
-
-    //reading data
-    for (int i = 0; i < input.first * 9; ++i) {
-        float tmp;
-        std::cin >> tmp;
-        assert(std::cin.good());
-        input.second.push_back(tmp);
-    }
+    std::unordered_map<int, int> output;
+    
+    read_data(input);
     std::vector<Triangle_t> triangles = get_triangles(input);
 
     for (int i = 0; i < input.first; ++i)
         for (int j = i + 1; j < input.first; ++j) {
-            if(lookup_intersection(triangles[i], triangles[j]))
-                std::cout << i << " " << j << " ";
+            if(lookup_intersection(triangles[i], triangles[j])) {
+                print_results(i, j, output);
+            }
         }
 
     std::cout << std::endl;

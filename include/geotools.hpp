@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include "primitives.hpp"
 #include "mathtools.hpp"
 #include "floatcompar.hpp"
@@ -36,31 +37,6 @@ bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
         return false; //no intersect
     else 
         return true;  
-}
-
-//reads data from input 
-std::vector<Triangle_t> get_triangles (std::pair<int, std::vector<double>> &input) {
-        std::vector<Triangle_t> triangles;
-
-        Point_t v1 {};
-        Point_t v2 {};
-        Point_t v3 {};
-
-        auto coord_it = input.second.begin();
-
-        for (int i = 0; i < input.first; ++i) {
-                v1.set(coord_it[0], coord_it[1], coord_it[2]);
-                coord_it += 3;
-                v2.set(coord_it[0], coord_it[1], coord_it[2]);
-                coord_it += 3;
-                v3.set(coord_it[0], coord_it[1], coord_it[2]);
-                coord_it += 3;
-                
-                assert(v1.valid() && v2.valid() && v3.valid());
-                triangles.push_back(Triangle_t(v1, v2, v3));
-        }
-
-        return triangles;
 }
 
 // rotates vertices about a given triangle num times preserving the order
