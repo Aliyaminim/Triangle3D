@@ -38,6 +38,12 @@ public:
         return (equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z));
     }
 
+    void set (const float x_, const float y_, const float z_) {
+        x = x_;
+        y = y_;
+        z = z_;
+    }
+
     void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
 };
 
@@ -48,7 +54,7 @@ public:
     std::array<float, 3> drc_vec;
 
     //constructor
-    explicit Line_t(const Point_t &p1, const Point_t &p2): r0(p1) {
+    Line_t(const Point_t &p1, const Point_t &p2): r0(p1) {
         drc_vec[0] = p2.x - p1.x;
         drc_vec[1] = p2.y - p1.y;
         drc_vec[2] = p2.z - p1.z;
@@ -66,7 +72,7 @@ public:
                                || std::isnan(drc_vec[2]));
     }
 
-    Line_t cross(const Line_t &line) {
+    Line_t cross(const Line_t &line) const {
         float x = drc_vec[1] * line.drc_vec[2] - drc_vec[2] * line.drc_vec[1];
         float y = drc_vec[2] * line.drc_vec[0] - drc_vec[0] * line.drc_vec[2];
         float z = drc_vec[0] * line.drc_vec[1] - drc_vec[1] * line.drc_vec[0];
@@ -75,7 +81,7 @@ public:
         return res;
     }
 
-    float dot(const Line_t &line) {
+    float dot(const Line_t &line) const {
         return (drc_vec[0] * line.drc_vec[0]) + (drc_vec[1] * line.drc_vec[1]) + (drc_vec[2] * line.drc_vec[2]);
     }
 };

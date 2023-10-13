@@ -1,12 +1,26 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include "primitives.hpp"
 #include "mathtools.hpp"
 #include "floatcompar.hpp"
 
 //checks if bounding boxes overlap
+/* min and max don't work with initializer_list, it seems that in std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x})
+std::min() is provided with only one argument which is tried to be constructed by Point_t constructor */
 bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
+    Point_t Amin{std::min(tr1.v1.x, std::min(tr1.v2.x, tr1.v3.x)), std::min(tr1.v1.y, std::min(tr1.v2.y, tr1.v3.y)), 
+                std::min(tr1.v1.z, std::min(tr1.v2.z, tr1.v3.z))};
+    Point_t Amax{std::max(tr1.v1.x, std::max(tr1.v2.x, tr1.v3.x)), std::max(tr1.v1.y, std::max(tr1.v2.y, tr1.v3.y)), 
+                std::max(tr1.v1.z, std::max(tr1.v2.z, tr1.v3.z))};
+
+    Point_t Bmin{std::min(tr2.v1.x, std::min(tr2.v2.x, tr2.v3.x)), std::min(tr2.v1.y, std::min(tr2.v2.y, tr2.v3.y)), 
+                std::min(tr2.v1.z, std::min(tr2.v2.z, tr2.v3.z))};
+    Point_t Bmax{std::max(tr2.v1.x, std::max(tr2.v2.x, tr2.v3.x)), std::max(tr2.v1.y, std::max(tr2.v2.y, tr2.v3.y)), 
+                std::max(tr2.v1.z, std::max(tr2.v2.z, tr2.v3.z))};
+
+    /* preferrable option
     Point_t Amin{std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x}), std::min({tr1.v1.y, tr1.v2.y, tr1.v3.y}), 
                 std::min({tr1.v1.z, tr1.v2.z, tr1.v3.z})};
     Point_t Amax{std::max({tr1.v1.x, tr1.v2.x, tr1.v3.x}), std::max({tr1.v1.y, tr1.v2.y, tr1.v3.y}), 
@@ -15,13 +29,38 @@ bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
     Point_t Bmin{std::min({tr2.v1.x, tr2.v2.x, tr2.v3.x}), std::min({tr2.v1.y, tr2.v2.y, tr2.v3.y}), 
                 std::min({tr2.v1.z, tr2.v2.z, tr2.v3.z})};
     Point_t Bmax{std::max({tr2.v1.x, tr2.v2.x, tr2.v3.x}), std::max({tr2.v1.y, tr2.v2.y, tr2.v3.y}), 
-                std::max({tr2.v1.z, tr2.v2.z, tr2.v3.z})};
+                std::max({tr2.v1.z, tr2.v2.z, tr2.v3.z})};*/
     
     if ((Bmin.x > Amax.x) || (Bmin.y > Amax.y) || (Bmin.z > Amax.z) 
         || (Amin.x > Bmax.x) || (Amin.y > Bmax.y) || (Amin.z >Bmax.z))
         return false; //no intersect
     else 
         return true;  
+}
+
+//reads data from input 
+std::vector<Triangle_t> get_triangles (std::pair<int, std::vector<double>> &input) {
+        std::vector<Triangle_t> triangles;
+
+        Point_t v1 {};
+        Point_t v2 {};
+        Point_t v3 {};
+
+        auto coord_it = input.second.begin();
+
+        for (int i = 0; i < input.first; ++i) {
+                v1.set(coord_it[0], coord_it[1], coord_it[2]);
+                coord_it += 3;
+                v2.set(coord_it[0], coord_it[1], coord_it[2]);
+                coord_it += 3;
+                v3.set(coord_it[0], coord_it[1], coord_it[2]);
+                coord_it += 3;
+                
+                assert(v1.valid() && v2.valid() && v3.valid());
+                triangles.push_back(Triangle_t(v1, v2, v3));
+        }
+
+        return triangles;
 }
 
 // rotates vertices about a given triangle num times preserving the order
@@ -52,19 +91,21 @@ void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) {
     tr2.vdistance[2] = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v3);
 }
 
+//checks if all distances between triangle's vertices and given plane are same signed
 bool allDistSameSigned(const Triangle_t &tr) {
     return ((greater(tr.vdistance[0], 0) && greater(tr.vdistance[1], 0) && greater(tr.vdistance[2], 0)) 
         || (less(tr.vdistance[0], 0) && less(tr.vdistance[1], 0) && less(tr.vdistance[2], 0)));
 }
 
+//checks if all distances between triangle's vertices and given plane are zero
 bool allDistZero(const Triangle_t &tr) {
      return (is_zero(tr.vdistance[0]) && is_zero(tr.vdistance[1]) && is_zero(tr.vdistance[2]));
 }
 
-void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
-    /* making a consistent form of relative position of triangles:
-    vertix v1 of each triangle is the only vertix in positive subspace of the other triangle's plane */
-    /*if ((less(Y5, 0) && greater(Y4, 0) && greater(Y6, 0)) || (greater(Y5, 0) && less(Y4, 0) && less(Y6,0))) {
+/*void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
+    //making a consistent form of relative position of triangles:
+    //vertix v1 of each triangle is the only vertix in positive subspace of the other triangle's plane
+    if ((less(Y5, 0) && greater(Y4, 0) && greater(Y6, 0)) || (greater(Y5, 0) && less(Y4, 0) && less(Y6,0))) {
         rotate_TriangleVertices(tr1, 2); 
         //rotate until v1 is the only vertix on that side of the other triangle's plane
         float Y = determinant3x3(tr2.v1, tr2.v2, tr2.v3, tr1.v1);
@@ -87,10 +128,12 @@ void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
         float Y = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
         if (Y < 0)
             swap_TriangleVertices(tr1);
-    }*/
-}
+    }
+}*/
+   
 
-bool SegmentTriangleIntersect(Triangle_t &tr, Line_t &line) {
+//checks if given segment intersects triangle, using method from Geometric tools for Computer Graphics(P.J.Schneider, D.H.Eberly)
+bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
     /* parametric representation of line = barycentric coordinates of any point in triangle
                             P + t * vec(d) = (1 − (u + v))* V1 + u * V2 + v * V3  */
     Line_t e1(tr.v1, tr.v2);
@@ -102,8 +145,9 @@ bool SegmentTriangleIntersect(Triangle_t &tr, Line_t &line) {
     if (is_zero(tmp))
         return false;
 
-
     tmp = 1 / tmp;
+
+    assert(line.r0.valid());
     Line_t s (tr.v1, line.r0);
     float u = tmp * s.dot(p);
     if (less(u, 0) || greater(u, 1))
@@ -116,14 +160,28 @@ bool SegmentTriangleIntersect(Triangle_t &tr, Line_t &line) {
 
     float t = tmp * e2.dot(q);
 
+    if (less(t, 0) || greater(t, 1))
+        return false;
+
     float x_ = line.r0.x + t * line.drc_vec[0];
     float y_ = line.r0.y + t * line.drc_vec[1];
     float z_ = line.r0.z + t * line.drc_vec[2];
 
-    Point_t intersection_point(x_, y_, z_);
+    Point_t intersection_point(x_, y_, z_); //maybe useful
 
     return true; //return intersection_point;
+}
 
+//checks if any of the segments of second triangle intersects first triangle
+bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &tr2) {
+    if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2}))
+        return true;
+    else if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v3}))
+        return true;
+    else if (SegmentTriangleIntersect(tr1, {tr2.v2, tr2.v3})) 
+        return true;
+    else 
+        return false;
 }
 
 //looks up if intersection between two triangles happens
@@ -142,11 +200,9 @@ bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
         return false; //no intersection
     if (allDistZero(tr1)) {
         //coplanar
+        std::cout << "Triangles are coplanar" << std::endl;
+        return false;
     }
-
-    //make_consistentTriangleOrientation(tr1, tr2);  maybe useful
-
-    //under construction
-
-    return false;
+    
+    return (checkAll_SegmentTriangleIntersect(tr1, tr2) || checkAll_SegmentTriangleIntersect(tr2, tr1));
 }
