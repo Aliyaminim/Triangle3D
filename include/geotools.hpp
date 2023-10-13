@@ -56,7 +56,7 @@ void swap_TriangleVertices(Triangle_t &tr) {
     tr.v2 = tr.v3;
     tr.v3 = temp;
     for (int i = 0; i < 3; ++i) 
-        tr.normal[i] = (-1) * tr.normal[i];
+        tr.normal.drc_vec[i] = (-1) * tr.normal.drc_vec[i];
     return;
 }
 
@@ -160,6 +160,80 @@ bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &
         return false;
 }
 
+//checks if intersection occurs between given edges
+bool edgeEdgeIntersection(Point_t &a1, Point_t &b1, Point_t &a2, Point_t &b2) {
+    Line_t a1b1{a1, b1};
+    Line_t a2b2{a2, b2};
+
+    Line_t b1a2{b1, a2};
+    Line_t b1b2{b1, b2};
+
+    Line_t cp1 = a1b1.cross(b1a2);
+    Line_t cp2 = a1b1.cross(b1b2);
+
+    if (cp1.dot(cp2) > 0)
+        return 0;
+    
+    Line_t b2a1{b2, a1};
+    Line_t b2b1{b2, b1};
+
+    cp1 = a2b2.cross(b2a1);
+    cp2 = a2b2.cross(b2b1);
+    if (cp1.dot(cp2) > 0)
+        return 0;
+    
+    return 1;
+}
+
+// checks if vertix lies within a coplanar triangle
+bool vertixliesWithincoplanarTriangle(Point_t &vertix, Triangle_t &tr) {			
+    Line_t a1b1{tr.v1, tr.v2};
+    Line_t b1c1{tr.v2, tr.v3};
+    Line_t c1a1{tr.v3, tr.v1};
+
+    Line_t N1 = a1b1.cross(tr.normal);
+    Line_t N2 = b1c1.cross(tr.normal);
+    Line_t N3 = c1a1.cross(tr.normal);
+
+    Line_t a1p{tr.v1, vertix};
+    Line_t b1p{tr.v2, vertix};
+    Line_t c1p{tr.v3, vertix};
+
+    float S1 = a1p.dot(N1);
+    float S2 = b1p.dot(N2);
+    float S3 = c1p.dot(N3);
+
+    if ((greater(S1, 0) && greater(S2, 0) && greater(S3, 0)) || (less(S1, 0) && less(S2, 0) && less(S3, 0)))
+        //vertix is inside triangle
+        return 1;
+    else
+        return 0;
+}
+
+//checks if intersection occurs between coplanar triangles
+bool find_intersection_coplanarTriangles(Triangle_t &tr1, Triangle_t &tr2) {
+    //test if any tr1 edges cross tr2 edges
+
+    if (edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v1, tr2.v2) ||
+        edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v2, tr2.v3) ||
+        edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v3, tr2.v1) ||
+        edgeEdgeIntersection(tr1.v2, tr1.v3, tr2.v1, tr2.v2) ||
+        edgeEdgeIntersection(tr1.v2, tr1.v3, tr2.v2, tr2.v3) ||
+        edgeEdgeIntersection(tr1.v2, tr1.v3, tr2.v3, tr2.v1) ||
+        edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v1, tr2.v2) ||
+	    edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v2, tr2.v3) ||	
+        edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v3, tr2.v1))
+        return true;
+
+    if (vertixliesWithincoplanarTriangle(tr1.v1, tr2))
+        return 1;
+    if (vertixliesWithincoplanarTriangle(tr2.v1, tr1))
+        return 1;
+
+    return 0; //no intersection of coplanar triangles
+}
+
+
 //looks up if intersection between two triangles happens
 bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
     if (!boundingboxes_overlap(tr1, tr2))
@@ -176,8 +250,7 @@ bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
         return false; //no intersection
     if (allDistZero(tr1)) {
         //coplanar
-        std::cout << "Triangles are coplanar" << std::endl;
-        return false;
+        return find_intersection_coplanarTriangles(tr1, tr2);
     }
     
     return (checkAll_SegmentTriangleIntersect(tr1, tr2) || checkAll_SegmentTriangleIntersect(tr2, tr1));

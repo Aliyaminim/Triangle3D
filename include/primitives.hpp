@@ -67,9 +67,17 @@ public:
         drc_vec[2] = z;
     }
 
+    Line_t() = default;
+
     bool valid() const {
         return r0.valid() && !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
                                || std::isnan(drc_vec[2]));
+    }
+
+    void set(float x_, float y_, float z_) {
+        drc_vec[0] = x_;
+        drc_vec[1] = y_;
+        drc_vec[2] = z_;
     }
 
     Line_t cross(const Line_t &line) const {
@@ -96,14 +104,16 @@ class Triangle_t {
         normal_[0] = vec12[1]*vec13[2] - vec12[2]*vec13[1];
         normal_[1] = vec12[2]*vec13[0] - vec12[0]*vec13[2];
         normal_[2] = vec12[0]*vec13[1] - vec12[1]*vec13[0];
-        float len = std::hypot(normal[0], normal[1], normal[2]);
+        float len = std::hypot(normal_[0], normal_[1], normal_[2]);
 
         for (int i = 0; i < 3; ++i) 
-            normal[i] = normal_[i] / len;
+            normal_[i] /= len;
+
+        normal.set(normal_[0], normal_[1], normal_[2]);
     }
 public:
     Point_t v1, v2, v3; 
-    std::array<float, 3> normal;
+    Line_t normal{};
     std::array<float, 3> vdistance; //contains distances between this vertices and other triangle's plane
 
     //constructor
