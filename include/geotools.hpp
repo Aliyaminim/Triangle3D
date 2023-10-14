@@ -11,6 +11,7 @@
 /* min and max don't work with initializer_list, it seems that in std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x})
 std::min() is provided with only one argument which is tried to be constructed by Point_t constructor */
 bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
+    assert(tr1.valid() && tr2.valid());
     Point_t Amin{std::min(tr1.v1.x, std::min(tr1.v2.x, tr1.v3.x)), std::min(tr1.v1.y, std::min(tr1.v2.y, tr1.v3.y)), 
                 std::min(tr1.v1.z, std::min(tr1.v2.z, tr1.v3.z))};
     Point_t Amax{std::max(tr1.v1.x, std::max(tr1.v2.x, tr1.v3.x)), std::max(tr1.v1.y, std::max(tr1.v2.y, tr1.v3.y)), 
@@ -40,7 +41,8 @@ bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
 }
 
 // rotates vertices about a given triangle num times preserving the order
-void rotate_TriangleVertices(Triangle_t &tr, int num){
+void rotate_TriangleVertices(Triangle_t &tr, int num) {
+    assert(tr.valid());
     for (int j = 0; j < num; j++) {
         Point_t temp = tr.v3;
         tr.v3 = tr.v2;
@@ -52,6 +54,7 @@ void rotate_TriangleVertices(Triangle_t &tr, int num){
 
 // swaps vertices in triangle to change direction of normal
 void swap_TriangleVertices(Triangle_t &tr) {
+    assert(tr.valid());
     Point_t temp = tr.v2;
     tr.v2 = tr.v3;
     tr.v3 = temp;
@@ -62,6 +65,7 @@ void swap_TriangleVertices(Triangle_t &tr) {
 
 //calculates distances between tr1's plane and tr2's vertices considering orientability 
 void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) { 
+    assert(tr1.valid() && tr2.valid());
     tr2.vdistance[0] = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
     tr2.vdistance[1] = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v2);
     tr2.vdistance[2] = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v3);
@@ -69,13 +73,15 @@ void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) {
 
 //checks if all distances between triangle's vertices and given plane are same signed
 bool allDistSameSigned(const Triangle_t &tr) {
+    assert(tr.valid());
     return ((greater(tr.vdistance[0], 0) && greater(tr.vdistance[1], 0) && greater(tr.vdistance[2], 0)) 
         || (less(tr.vdistance[0], 0) && less(tr.vdistance[1], 0) && less(tr.vdistance[2], 0)));
 }
 
 //checks if all distances between triangle's vertices and given plane are zero
 bool allDistZero(const Triangle_t &tr) {
-     return (is_zero(tr.vdistance[0]) && is_zero(tr.vdistance[1]) && is_zero(tr.vdistance[2]));
+    assert(tr.valid());
+    return (is_zero(tr.vdistance[0]) && is_zero(tr.vdistance[1]) && is_zero(tr.vdistance[2]));
 }
 
 /*void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
@@ -112,11 +118,13 @@ bool allDistZero(const Triangle_t &tr) {
 bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
     /* parametric representation of line = barycentric coordinates of any point in triangle
                             P + t * vec(d) = (1 − (u + v))* V1 + u * V2 + v * V3  */
+    assert(tr.valid() && line.valid());
     Line_t e1(tr.v1, tr.v2);
     Line_t e2(tr.v1, tr.v3);
 
     Line_t p = line.cross(e2);
     float tmp = p.dot(e1);
+    assert(!std::isnan(tmp));
 
     if (is_zero(tmp))
         return false;
@@ -124,16 +132,18 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
     assert(line.r0.valid());
     Line_t s (tr.v1, line.r0);
     float u = s.dot(p) / tmp;
+    assert(!std::isnan(u));
     if (less(u, 0) || greater(u, 1))
         return false;
     
     Line_t q = s.cross(e1);
     float v = line.dot(q) / tmp;
+    assert(!std::isnan(v));
     if (less(v, 0) || greater(u, 1))
         return false;
 
     float t = e2.dot(q) / tmp;
-
+    assert(!std::isnan(t));
     if (less(t, 0) || greater(t, 1))
         return false;
 
@@ -148,6 +158,7 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
 
 //checks if any of the segments of second triangle intersects first triangle
 bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &tr2) {
+    assert(tr1.valid() && tr2.valid());
     if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2})) 
         return true;
     else if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v3})) 
@@ -159,7 +170,7 @@ bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &
 }
 
 //checks if intersection occurs between given edges
-bool edgeEdgeIntersection(Point_t &a1, Point_t &b1, Point_t &a2, Point_t &b2) {
+bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a2, const Point_t &b2) {
     Line_t a1b1{a1, b1};
     Line_t a2b2{a2, b2};
 
@@ -184,7 +195,8 @@ bool edgeEdgeIntersection(Point_t &a1, Point_t &b1, Point_t &a2, Point_t &b2) {
 }
 
 // checks if vertix lies within a coplanar triangle
-bool vertixliesWithincoplanarTriangle(Point_t &vertix, Triangle_t &tr) {			
+bool vertixliesWithincoplanarTriangle(const Point_t &vertix, const Triangle_t &tr) {
+    assert(vertix.valid() && tr.valid());			
     Line_t a1b1{tr.v1, tr.v2};
     Line_t b1c1{tr.v2, tr.v3};
     Line_t c1a1{tr.v3, tr.v1};
@@ -209,8 +221,9 @@ bool vertixliesWithincoplanarTriangle(Point_t &vertix, Triangle_t &tr) {
 }
 
 //checks if intersection occurs between coplanar triangles
-bool find_intersection_coplanarTriangles(Triangle_t &tr1, Triangle_t &tr2) {
+bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Triangle_t &tr2) {
     //test if any tr1 edges cross tr2 edges
+    assert(tr1.valid() && tr2.valid());
 
     if (edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v1, tr2.v2) ||
         edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v2, tr2.v3) ||
@@ -234,10 +247,9 @@ bool find_intersection_coplanarTriangles(Triangle_t &tr1, Triangle_t &tr2) {
 
 //looks up if intersection between two triangles happens
 bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
+    assert(tr1.valid() && tr2.valid());
     if (!boundingboxes_overlap(tr1, tr2))
         return false; //no intersection
-    
-    assert(tr1.valid() && tr2.valid());
 
     //calculate distances between one triangle's plane and other triangle's vertices considering orientability 
     count_vdistance(tr1, tr2);

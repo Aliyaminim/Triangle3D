@@ -34,7 +34,7 @@ public:
     bool valid() const { return !(std::isnan(x) || std::isnan(y) || std::isnan(z)); }
 
     bool equal_point (const Point_t &rhs) const {
-        assert(valid() && rhs.valid());      
+        assert((*this).valid() && rhs.valid());      
         return (equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z));
     }
 
@@ -44,7 +44,10 @@ public:
         z = z_;
     }
 
-    void print() const { std::cout << "(" << x << " ; " << y << " ; " << z << ")"; }
+    void print() const { 
+        assert((*this).valid());
+        std::cout << "(" << x << " ; " << y << " ; " << z << ")"; 
+    }
 };
 
 class Line_t { //also using this class for segments and vectors
@@ -58,13 +61,6 @@ public:
         drc_vec[0] = p2.x - p1.x;
         drc_vec[1] = p2.y - p1.y;
         drc_vec[2] = p2.z - p1.z;
-
-        float len = std::hypot(drc_vec[0], drc_vec[1], drc_vec[2]);
-
-        if (len != 0) {
-            for (int i = 0; i < 3; ++i)
-                drc_vec[i] /= len; 
-        }
     } 
 
     //constructor mostly for vectors
@@ -72,27 +68,25 @@ public:
         drc_vec[0] = x;
         drc_vec[1] = y;
         drc_vec[2] = z;
-
-        float len = std::hypot(drc_vec[0], drc_vec[1], drc_vec[2]);
-
-        if (len != 0) {
-            for (int i = 0; i < 3; ++i)
-                drc_vec[i] /= len; 
-        }
     }
 
     Line_t() = default;
-
-    bool valid() const {
-        return r0.valid() && !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
-                               || std::isnan(drc_vec[2]));
-    }
 
     void set(float x_, float y_, float z_) {
         drc_vec[0] = x_;
         drc_vec[1] = y_;
         drc_vec[2] = z_;
+    }
 
+    bool valid() const {
+        //doesn't check r0.valid(), because mostly it's used for vectors
+        return !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
+                               || std::isnan(drc_vec[2]));
+    }
+
+    //normalizes direction vectors
+    void normalizing_drcvec() {
+        assert((*this).valid());
         float len = std::hypot(drc_vec[0], drc_vec[1], drc_vec[2]);
 
         if (len != 0) {
@@ -102,6 +96,7 @@ public:
     }
 
     Line_t cross(const Line_t &line) const {
+        assert(line.valid() && (*this).valid());
         float x = drc_vec[1] * line.drc_vec[2] - drc_vec[2] * line.drc_vec[1];
         float y = drc_vec[2] * line.drc_vec[0] - drc_vec[0] * line.drc_vec[2];
         float z = drc_vec[0] * line.drc_vec[1] - drc_vec[1] * line.drc_vec[0];
@@ -111,6 +106,7 @@ public:
     }
 
     float dot(const Line_t &line) const {
+        assert(line.valid() && (*this).valid());
         return (drc_vec[0] * line.drc_vec[0]) + (drc_vec[1] * line.drc_vec[1]) + (drc_vec[2] * line.drc_vec[2]);
     }
 };
@@ -127,6 +123,8 @@ class Triangle_t {
         normal_[2] = vec12[0]*vec13[1] - vec12[1]*vec13[0];
         
         normal.set(normal_[0], normal_[1], normal_[2]);
+        normal.normalizing_drcvec();
+
     }
 public:
     Point_t v1, v2, v3; 
