@@ -121,20 +121,18 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
     if (is_zero(tmp))
         return false;
 
-    tmp = 1 / tmp;
-
     assert(line.r0.valid());
     Line_t s (tr.v1, line.r0);
-    float u = tmp * s.dot(p);
+    float u = s.dot(p) / tmp;
     if (less(u, 0) || greater(u, 1))
         return false;
     
     Line_t q = s.cross(e1);
-    float v = tmp * line.dot(q);
+    float v = line.dot(q) / tmp;
     if (less(v, 0) || greater(u, 1))
         return false;
 
-    float t = tmp * e2.dot(q);
+    float t = e2.dot(q) / tmp;
 
     if (less(t, 0) || greater(t, 1))
         return false;
@@ -150,11 +148,11 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
 
 //checks if any of the segments of second triangle intersects first triangle
 bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &tr2) {
-    if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2}))
+    if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2})) 
         return true;
-    else if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v3}))
+    else if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v3})) 
         return true;
-    else if (SegmentTriangleIntersect(tr1, {tr2.v2, tr2.v3})) 
+    else if (SegmentTriangleIntersect(tr1, {tr2.v2, tr2.v3}))
         return true;
     else 
         return false;

@@ -52,4 +52,5 @@ void print_results(int i, int j, std::unordered_map<int, int> &output) {
         std::cout << j << " ";
         output.emplace(j,j);
     }
+    //std::cout << "(" << i << "," << j << ")";
 }

@@ -58,13 +58,19 @@ public:
         drc_vec[0] = p2.x - p1.x;
         drc_vec[1] = p2.y - p1.y;
         drc_vec[2] = p2.z - p1.z;
+
+        float len = std::hypot(drc_vec[0], drc_vec[1], drc_vec[2]);
+
+        for (int i = 0; i < 3; ++i)
+            drc_vec[i] /= len; 
     } 
 
     //constructor mostly for vectors
     explicit Line_t(float x, float y, float z) {
-        drc_vec[0] = x;
-        drc_vec[1] = y;
-        drc_vec[2] = z;
+        float len = std::hypot(x, y, z);
+        drc_vec[0] = x / len;
+        drc_vec[1] = y / len;
+        drc_vec[2] = z / len;
     }
 
     Line_t() = default;
@@ -75,9 +81,10 @@ public:
     }
 
     void set(float x_, float y_, float z_) {
-        drc_vec[0] = x_;
-        drc_vec[1] = y_;
-        drc_vec[2] = z_;
+        float len = std::hypot(x_, y_, z_);
+        drc_vec[0] = x_ / len;
+        drc_vec[1] = y_ / len;
+        drc_vec[2] = z_ / len;
     }
 
     Line_t cross(const Line_t &line) const {
