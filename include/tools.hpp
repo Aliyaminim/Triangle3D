@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <algorithm>
 #include "primitives.hpp"
 
 //reads data
@@ -41,16 +42,26 @@ std::vector<Triangle_t> get_triangles (std::pair<int, std::vector<double>> &inpu
         return triangles;
 }
 
-//prints numbers of intersecting triangles
-void print_results(int i, int j, std::unordered_map<int, int> &output) {
-    if (output.find(i) == output.end()) {
-        std::cout << i << " ";
-        output.emplace(i, i);
+void add_result(int i, int j, std::vector<int> &output, std::unordered_map<int, int> &hash_output) {
+    if (hash_output.find(i) == hash_output.end()) {
+        hash_output.emplace(i, i);
+        output.push_back(i);
     }
 
-    if (output.find(j) == output.end()) {
-        std::cout << j << " ";
-        output.emplace(j,j);
+    if (hash_output.find(j) == hash_output.end()) {
+        hash_output.emplace(j,j);
+        output.push_back(j);
     }
-    //std::cout << "(" << i << "," << j << ")";
+}
+
+//prints numbers of intersecting triangles
+void print_results(std::vector<int> &output) {
+    auto it_begin = output.begin();
+    auto it_end = output.end();
+
+    std::sort(it_begin, it_end);
+    for (auto it = it_begin; it != it_end; ++it)
+        std::cout << *it << "\n";
+    
+    std::cout << std::endl;
 }
