@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25.1)
+cmake_minimum_required(VERSION 3.13)
 
 project(Triangles)
 
@@ -17,8 +17,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+find_package(GTest REQUIRED)
 enable_testing()
-add_subdirectory(googletest)
 add_subdirectory(test)
 
 #add_subdirectory(src)

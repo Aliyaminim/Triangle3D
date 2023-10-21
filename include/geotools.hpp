@@ -139,7 +139,10 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
     Line_t q = s.cross(e1);
     float v = line.dot(q) / tmp;
     assert(!std::isnan(v));
-    if (less(v, 0) || greater(u, 1))
+    if (less(v, 0) || greater(v, 1))
+        return false;
+
+    if((u + v) > 1)
         return false;
 
     float t = e2.dot(q) / tmp;
