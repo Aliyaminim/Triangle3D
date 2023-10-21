@@ -50,14 +50,17 @@ public:
     }
 };
 
-class Line_t { //also using this class for segments and vectors
+class Line_t { 
+    int mode;
+    /* if this class is used for line, mode equals 0
+       if it's used for segment, mode equals 1 */
 
 public:
     Point_t r0;
     std::array<float, 3> drc_vec;
 
     //constructor
-    Line_t(const Point_t &p1, const Point_t &p2): r0(p1) {
+    Line_t(const Point_t &p1, const Point_t &p2, int mode_): mode(mode_), r0(p1) {
         drc_vec[0] = p2.x - p1.x;
         drc_vec[1] = p2.y - p1.y;
         drc_vec[2] = p2.z - p1.z;
@@ -79,9 +82,14 @@ public:
     }
 
     bool valid() const {
-        //doesn't check r0.valid(), because mostly it's used for vectors
-        return !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
+        if (mode == 0) 
+            return r0.valid() && (!(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
+                               || std::isnan(drc_vec[2])));
+        else if (mode == 1)
+            return !(std::isnan(drc_vec[0]) || std::isnan(drc_vec[1]) 
                                || std::isnan(drc_vec[2]));
+        else 
+            return false;
     }
 
     //normalizes direction vectors
@@ -110,6 +118,8 @@ public:
         return (drc_vec[0] * line.drc_vec[0]) + (drc_vec[1] * line.drc_vec[1]) + (drc_vec[2] * line.drc_vec[2]);
     }
 };
+
+using Segment_t = Line_t;
 
 class Triangle_t {
     void getNormal(const Point_t &v1_, const Point_t &v2_, const Point_t &v3_) {

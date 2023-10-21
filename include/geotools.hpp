@@ -115,29 +115,29 @@ bool allDistZero(const Triangle_t &tr) {
    
 
 //checks if given segment intersects triangle, using method from Geometric tools for Computer Graphics(P.J.Schneider, D.H.Eberly)
-bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
-    /* parametric representation of line = barycentric coordinates of any point in triangle
+bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
+    /* parametric representation of seg = barycentric coordinates of any point in triangle
                             P + t * vec(d) = (1 − (u + v))* V1 + u * V2 + v * V3  */
-    assert(tr.valid() && line.valid());
-    Line_t e1(tr.v1, tr.v2);
-    Line_t e2(tr.v1, tr.v3);
+    assert(tr.valid() && seg.valid());
+    Line_t e1(tr.v1, tr.v2, 0);
+    Line_t e2(tr.v1, tr.v3, 0);
 
-    Line_t p = line.cross(e2);
+    Line_t p = seg.cross(e2);
     float tmp = p.dot(e1);
     assert(!std::isnan(tmp));
 
     if (is_zero(tmp))
         return false;
 
-    assert(line.r0.valid());
-    Line_t s (tr.v1, line.r0);
+    assert(seg.r0.valid());
+    Line_t s (tr.v1, seg.r0, 0);
     float u = s.dot(p) / tmp;
     assert(!std::isnan(u));
     if (less(u, 0) || greater(u, 1))
         return false;
     
     Line_t q = s.cross(e1);
-    float v = line.dot(q) / tmp;
+    float v = seg.dot(q) / tmp;
     assert(!std::isnan(v));
     if (less(v, 0) || greater(v, 1))
         return false;
@@ -150,9 +150,9 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
     if (less(t, 0) || greater(t, 1))
         return false;
 
-    float x_ = line.r0.x + t * line.drc_vec[0];
-    float y_ = line.r0.y + t * line.drc_vec[1];
-    float z_ = line.r0.z + t * line.drc_vec[2];
+    float x_ = seg.r0.x + t * seg.drc_vec[0];
+    float y_ = seg.r0.y + t * seg.drc_vec[1];
+    float z_ = seg.r0.z + t * seg.drc_vec[2];
 
     Point_t intersection_point(x_, y_, z_); //maybe useful
 
@@ -162,11 +162,11 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Line_t &line) {
 //checks if any of the segments of second triangle intersects first triangle
 bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &tr2) {
     assert(tr1.valid() && tr2.valid());
-    if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2})) 
+    if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2, 1})) 
         return true;
-    else if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v3})) 
+    else if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v3, 1})) 
         return true;
-    else if (SegmentTriangleIntersect(tr1, {tr2.v2, tr2.v3}))
+    else if (SegmentTriangleIntersect(tr1, {tr2.v2, tr2.v3, 1}))
         return true;
     else 
         return false;
@@ -174,11 +174,11 @@ bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &
 
 //checks if intersection occurs between given edges
 bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a2, const Point_t &b2) {
-    Line_t a1b1{a1, b1};
-    Line_t a2b2{a2, b2};
+    Line_t a1b1{a1, b1, 0};
+    Line_t a2b2{a2, b2, 0};
 
-    Line_t b1a2{b1, a2};
-    Line_t b1b2{b1, b2};
+    Line_t b1a2{b1, a2, 0};
+    Line_t b1b2{b1, b2, 0};
 
     Line_t cp1 = a1b1.cross(b1a2);
     Line_t cp2 = a1b1.cross(b1b2);
@@ -186,8 +186,8 @@ bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a
     if (cp1.dot(cp2) > 0)
         return 0;
     
-    Line_t b2a1{b2, a1};
-    Line_t b2b1{b2, b1};
+    Line_t b2a1{b2, a1, 0};
+    Line_t b2b1{b2, b1, 0};
 
     cp1 = a2b2.cross(b2a1);
     cp2 = a2b2.cross(b2b1);
@@ -200,17 +200,17 @@ bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a
 // checks if vertix lies within a coplanar triangle
 bool vertixliesWithincoplanarTriangle(const Point_t &vertix, const Triangle_t &tr) {
     assert(vertix.valid() && tr.valid());			
-    Line_t a1b1{tr.v1, tr.v2};
-    Line_t b1c1{tr.v2, tr.v3};
-    Line_t c1a1{tr.v3, tr.v1};
+    Line_t a1b1{tr.v1, tr.v2, 0};
+    Line_t b1c1{tr.v2, tr.v3, 0};
+    Line_t c1a1{tr.v3, tr.v1, 0};
 
     Line_t N1 = a1b1.cross(tr.normal);
     Line_t N2 = b1c1.cross(tr.normal);
     Line_t N3 = c1a1.cross(tr.normal);
 
-    Line_t a1p{tr.v1, vertix};
-    Line_t b1p{tr.v2, vertix};
-    Line_t c1p{tr.v3, vertix};
+    Line_t a1p{tr.v1, vertix, 0};
+    Line_t b1p{tr.v2, vertix, 0};
+    Line_t c1p{tr.v3, vertix, 0};
 
     float S1 = a1p.dot(N1);
     float S2 = b1p.dot(N2);
@@ -237,7 +237,7 @@ bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Triangle_t
         edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v1, tr2.v2) ||
 	    edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v2, tr2.v3) ||	
         edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v3, tr2.v1))
-        return true;
+        return 1;
 
     if (vertixliesWithincoplanarTriangle(tr1.v1, tr2))
         return 1;
