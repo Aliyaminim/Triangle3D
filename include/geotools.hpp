@@ -44,8 +44,6 @@ Point_t min_poinntt(const Triangle_t &tr) {
 }
 
 //checks if bounding boxes overlap
-/* min and max don't work with initializer_list, it seems that in std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x})
-std::min() is provided with only one argument which is tried to be constructed by Point_t constructor */
 bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
     assert(tr1.valid() && tr2.valid());
     Point_t Amin = min_poinntt(tr1);
@@ -103,36 +101,6 @@ bool allDistZero(const Triangle_t &tr) {
     assert(tr.valid());
     return (cmp::is_zero(tr.vdistance[0]) && cmp::is_zero(tr.vdistance[1]) && cmp::is_zero(tr.vdistance[2]));
 }
-
-/*void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
-    //making a consistent form of relative position of triangles:
-    //vertix v1 of each triangle is the only vertix in positive subspace of the other triangle's plane
-    if ((cmp::less(Y5, 0) && cmp::greater(Y4, 0) && cmp::greater(Y6, 0)) || (cmp::greater(Y5, 0) && cmp::less(Y4, 0) && cmp::less(Y6,0))) {
-        rotate_TriangleVertices(tr1, 2); 
-        //rotate until v1 is the only vertix on that side of the other triangle's plane
-        float Y = determinant3x3(tr2.v1, tr2.v2, tr2.v3, tr1.v1);
-        if (Y < 0)
-            swap_TriangleVertices(tr2); //assure v1 in tr1 in positive subspace of tr2's plane
-    } else if ((less_equal(Y6, 0) && greater_equal(Y4, 0) && greater_equal(Y5, 0)) || (greater_equal(Y6, 0) && less_equal(Y4, 0) && less_equal(Y5, 0))) {
-        rotate_TriangleVertices(tr1, 1);
-        float Y = determinant3x3(tr2.v1, tr2.v2, tr2.v3, tr1.v1);
-        if (Y < 0)
-            swap_TriangleVertices(tr2);
-    }
-    
-    if ((less_equal(Y2, 0) && cmp::greater(Y1, 0) && cmp::greater(Y3, 0)) || (cmp::greater(Y2, 0) && cmp::less(Y1, 0) && cmp::less(Y3,0))) {
-        rotate_TriangleVertices(tr2, 2);
-        float Y = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
-        if (Y < 0)
-            swap_TriangleVertices(tr1);
-    } else if ((less_equal(Y3, 0) && cmp::greater(Y1, 0) && cmp::greater(Y2, 0)) || (cmp::greater(Y3, 0) && cmp::less(Y1, 0) && cmp::less(Y2, 0))) {
-        rotate_TriangleVertices(tr2, 1);
-        float Y = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
-        if (Y < 0)
-            swap_TriangleVertices(tr1);
-    }
-}*/
-   
 
 //checks if given segment intersects triangle, using method from Geometric tools for Computer Graphics(P.J.Schneider, D.H.Eberly)
 bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
