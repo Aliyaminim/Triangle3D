@@ -232,16 +232,12 @@ bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Triangle_t
     //test if any tr1 edges cross tr2 edges
     assert(tr1.valid() && tr2.valid());
 
-    if (edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v1, tr2.v2) ||
-        edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v2, tr2.v3) ||
-        edgeEdgeIntersection(tr1.v1, tr1.v2, tr2.v3, tr2.v1) ||
-        edgeEdgeIntersection(tr1.v2, tr1.v3, tr2.v1, tr2.v2) ||
-        edgeEdgeIntersection(tr1.v2, tr1.v3, tr2.v2, tr2.v3) ||
-        edgeEdgeIntersection(tr1.v2, tr1.v3, tr2.v3, tr2.v1) ||
-        edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v1, tr2.v2) ||
-	    edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v2, tr2.v3) ||	
-        edgeEdgeIntersection(tr1.v3, tr1.v1, tr2.v3, tr2.v1))
-        return 1;
+    for (int i = 0; i < 2; ++i) 
+        for (int j = i + 1; j < 3; ++j) 
+            for (int k = 0; k < 2; ++k) 
+                for (int m = k + 1; m < 3; ++m) 
+                    if (edgeEdgeIntersection(tr1.v[i], tr1.v[j], tr2.v[k], tr2.v[m]))
+                        return 1;
 
     if (vertixliesWithincoplanarTriangle(tr1.v1, tr2))
         return 1;

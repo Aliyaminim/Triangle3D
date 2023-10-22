@@ -53,7 +53,7 @@ public:
 };
 
 class Line_t { 
-    int mode = 0;
+    int mode;
     /* if this class is used for line, mode equals 0
        if it's used for segment, mode equals 1 */
 
@@ -62,7 +62,7 @@ public:
     std::array<float, 3> drc_vec;
 
     //constructor
-    Line_t(const Point_t &p1, const Point_t &p2, int mode_): mode(mode_), r0(p1) {
+    Line_t(const Point_t &p1, const Point_t &p2, int mode_ = 0): mode(mode_), r0(p1) {
         drc_vec[0] = p2.x - p1.x;
         drc_vec[1] = p2.y - p1.y;
         drc_vec[2] = p2.z - p1.z;
@@ -140,16 +140,21 @@ class Triangle_t {
     }
 public:
     Point_t v1, v2, v3; 
+    std::array<Point_t, 3> v;
     Line_t normal{};
     std::array<float, 3> vdistance; //contains distances between this vertices and other triangle's plane
 
     //constructor
     explicit Triangle_t(const Point_t &v1_, const Point_t &v2_, const Point_t &v3_) : v1(v1_), v2(v2_),
-                                                                             v3(v3_) {       
+                                                                             v3(v3_) {    
+        v[0] = v1;
+        v[1] = v2;
+        v[2] = v3;
         getNormal(v1_, v2_, v3_);
     }
 
     bool valid() const { return (v1.valid() && v2.valid() && v3.valid());}
 };
+
 }
 }
