@@ -6,6 +6,8 @@
 #include "geotools.hpp"
 #include "tools.hpp"
 
+using namespace yLab::geometry;
+
 int main() {
     std::pair<int, std::vector<double>> input; 
     std::unordered_map<int, int> hash_output;
@@ -17,7 +19,7 @@ int main() {
     int kol_intersection = 0;
     for (int i = 0; i < input.first; ++i)
         for (int j = i + 1; j < input.first; ++j) {
-            if(lookup_intersection(triangles[i], triangles[j])) {
+            if(intersection::lookup_intersection(triangles[i], triangles[j])) {
                 add_result(i, j, output, hash_output);
                 ++kol_intersection;
             }

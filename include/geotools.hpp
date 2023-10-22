@@ -7,6 +7,10 @@
 #include "mathtools.hpp"
 #include "floatcompar.hpp"
 
+namespace yLab::geometry {
+
+namespace intersection {
+
 //checks if bounding boxes overlap
 /* min and max don't work with initializer_list, it seems that in std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x})
 std::min() is provided with only one argument which is tried to be constructed by Point_t constructor */
@@ -74,20 +78,20 @@ void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) {
 //checks if all distances between triangle's vertices and given plane are same signed
 bool allDistSameSigned(const Triangle_t &tr) {
     assert(tr.valid());
-    return ((greater(tr.vdistance[0], 0) && greater(tr.vdistance[1], 0) && greater(tr.vdistance[2], 0)) 
-        || (less(tr.vdistance[0], 0) && less(tr.vdistance[1], 0) && less(tr.vdistance[2], 0)));
+    return ((cmp::greater(tr.vdistance[0], 0) && cmp::greater(tr.vdistance[1], 0) && cmp::greater(tr.vdistance[2], 0)) 
+        || (cmp::less(tr.vdistance[0], 0) && cmp::less(tr.vdistance[1], 0) && cmp::less(tr.vdistance[2], 0)));
 }
 
 //checks if all distances between triangle's vertices and given plane are zero
 bool allDistZero(const Triangle_t &tr) {
     assert(tr.valid());
-    return (is_zero(tr.vdistance[0]) && is_zero(tr.vdistance[1]) && is_zero(tr.vdistance[2]));
+    return (cmp::is_zero(tr.vdistance[0]) && cmp::is_zero(tr.vdistance[1]) && cmp::is_zero(tr.vdistance[2]));
 }
 
 /*void make_consistentTriangleOrientation(Triangle_t &tr1, Triangle_t &tr2) {
     //making a consistent form of relative position of triangles:
     //vertix v1 of each triangle is the only vertix in positive subspace of the other triangle's plane
-    if ((less(Y5, 0) && greater(Y4, 0) && greater(Y6, 0)) || (greater(Y5, 0) && less(Y4, 0) && less(Y6,0))) {
+    if ((cmp::less(Y5, 0) && cmp::greater(Y4, 0) && cmp::greater(Y6, 0)) || (cmp::greater(Y5, 0) && cmp::less(Y4, 0) && cmp::less(Y6,0))) {
         rotate_TriangleVertices(tr1, 2); 
         //rotate until v1 is the only vertix on that side of the other triangle's plane
         float Y = determinant3x3(tr2.v1, tr2.v2, tr2.v3, tr1.v1);
@@ -100,12 +104,12 @@ bool allDistZero(const Triangle_t &tr) {
             swap_TriangleVertices(tr2);
     }
     
-    if ((less_equal(Y2, 0) && greater(Y1, 0) && greater(Y3, 0)) || (greater(Y2, 0) && less(Y1, 0) && less(Y3,0))) {
+    if ((less_equal(Y2, 0) && cmp::greater(Y1, 0) && cmp::greater(Y3, 0)) || (cmp::greater(Y2, 0) && cmp::less(Y1, 0) && cmp::less(Y3,0))) {
         rotate_TriangleVertices(tr2, 2);
         float Y = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
         if (Y < 0)
             swap_TriangleVertices(tr1);
-    } else if ((less_equal(Y3, 0) && greater(Y1, 0) && greater(Y2, 0)) || (greater(Y3, 0) && less(Y1, 0) && less(Y2, 0))) {
+    } else if ((less_equal(Y3, 0) && cmp::greater(Y1, 0) && cmp::greater(Y2, 0)) || (cmp::greater(Y3, 0) && cmp::less(Y1, 0) && cmp::less(Y2, 0))) {
         rotate_TriangleVertices(tr2, 1);
         float Y = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
         if (Y < 0)
@@ -126,20 +130,20 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
     float tmp = p.dot(e1);
     assert(!std::isnan(tmp));
 
-    if (is_zero(tmp))
+    if (cmp::is_zero(tmp))
         return false;
 
     assert(seg.r0.valid());
     Line_t s (tr.v1, seg.r0, 0);
     float u = s.dot(p) / tmp;
     assert(!std::isnan(u));
-    if (less(u, 0) || greater(u, 1))
+    if (cmp::less(u, 0) || cmp::greater(u, 1))
         return false;
     
     Line_t q = s.cross(e1);
     float v = seg.dot(q) / tmp;
     assert(!std::isnan(v));
-    if (less(v, 0) || greater(v, 1))
+    if (cmp::less(v, 0) || cmp::greater(v, 1))
         return false;
 
     if((u + v) > 1)
@@ -147,7 +151,7 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
 
     float t = e2.dot(q) / tmp;
     assert(!std::isnan(t));
-    if (less(t, 0) || greater(t, 1))
+    if (cmp::less(t, 0) || cmp::greater(t, 1))
         return false;
 
     float x_ = seg.r0.x + t * seg.drc_vec[0];
@@ -216,7 +220,7 @@ bool vertixliesWithincoplanarTriangle(const Point_t &vertix, const Triangle_t &t
     float S2 = b1p.dot(N2);
     float S3 = c1p.dot(N3);
 
-    if ((greater(S1, 0) && greater(S2, 0) && greater(S3, 0)) || (less(S1, 0) && less(S2, 0) && less(S3, 0)))
+    if ((cmp::greater(S1, 0) && cmp::greater(S2, 0) && cmp::greater(S3, 0)) || (cmp::less(S1, 0) && cmp::less(S2, 0) && cmp::less(S3, 0)))
         //vertix is inside triangle
         return 1;
     else
@@ -267,4 +271,7 @@ bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
     }
     
     return (checkAll_SegmentTriangleIntersect(tr1, tr2) || checkAll_SegmentTriangleIntersect(tr2, tr1));
+}
+
+}
 }

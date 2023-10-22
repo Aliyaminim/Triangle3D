@@ -2,6 +2,8 @@
 #include "primitives.hpp"
 #include "geotools.hpp"
 
+using namespace yLab::geometry;
+
 TEST(TestClassPointt, TestValid) {
     Point_t p{};
     ASSERT_TRUE(std::isnan(p.x));
@@ -30,7 +32,7 @@ TEST(TestTrianglet, Testboundingboxesoverlap1) {
     Point_t p3_(0, 0.2, 0);
     Triangle_t tr2{p1_, p2_, p3_};
 
-    ASSERT_TRUE(boundingboxes_overlap(tr1, tr2));
+    ASSERT_TRUE(intersection::boundingboxes_overlap(tr1, tr2));
 }
 
 TEST(TestTrianglet, Testboundingboxesoverlap2) {
@@ -44,5 +46,5 @@ TEST(TestTrianglet, Testboundingboxesoverlap2) {
     Point_t p3_(10, 0, 34);
     Triangle_t tr2{p1_, p2_, p3_};
 
-    ASSERT_FALSE(boundingboxes_overlap(tr1, tr2));
+    ASSERT_FALSE(intersection::boundingboxes_overlap(tr1, tr2));
 }

@@ -19,7 +19,9 @@
 #include <array>
 #include "floatcompar.hpp"
 
-//#define inter_area_width 100.0
+namespace yLab {
+
+namespace geometry {
 
 class Point_t {
 public:
@@ -35,7 +37,7 @@ public:
 
     bool equal_point (const Point_t &rhs) const {
         assert((*this).valid() && rhs.valid());      
-        return (equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z));
+        return (cmp::equal(x, rhs.x) && cmp::equal(y, rhs.y) && cmp::equal(z, rhs.z));
     }
 
     void set (const float x_, const float y_, const float z_) {
@@ -51,7 +53,7 @@ public:
 };
 
 class Line_t { 
-    int mode;
+    int mode = 0;
     /* if this class is used for line, mode equals 0
        if it's used for segment, mode equals 1 */
 
@@ -149,3 +151,5 @@ public:
 
     bool valid() const { return (v1.valid() && v2.valid() && v3.valid());}
 };
+}
+}

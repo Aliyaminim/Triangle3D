@@ -1,5 +1,9 @@
 #pragma once
 
+namespace yLab {
+    
+namespace cmp {
+
 static float flt_tolerance = 0.00001;
 
 //(a < b) return 1, (a == b) return 0, (a > b) return -1; using relative epsilon comparison
@@ -38,4 +42,7 @@ bool less(float a, float b) {
 
 bool less_equal(float a, float b) {
     return ((float_comparator(a,b) == 1) || (float_comparator(a,b) == 0));
+}
+
+}
 }

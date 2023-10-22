@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "primitives.hpp"
 
+namespace yLab::geometry {
+    
 //reads data
 void read_data(std::pair<int, std::vector<double>> &input) {
     std::cin >> input.first; //number of triangles
@@ -65,4 +67,6 @@ void print_results(std::vector<int> &output) {
         std::cout << *it << "\n";
     
     std::cout << std::endl;
+}
+
 }

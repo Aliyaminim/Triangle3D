@@ -3,6 +3,8 @@
 #include "primitives.hpp"
 #include <cassert>
 
+namespace yLab::geometry {
+
 // |Dx-Ax Dy-Ay Dz-Az|
 // |Dx-Bx Dy-By Dz-Bz|
 // |Dx-Cx Dy-Cy Dz-Cz|
@@ -15,4 +17,6 @@ float determinant3x3(const Point_t &A, const Point_t &B, const Point_t &C, const
 
 	return det;
 } 
+
+}
 
