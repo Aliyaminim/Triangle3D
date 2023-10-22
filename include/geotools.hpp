@@ -11,31 +11,47 @@ namespace yLab::geometry {
 
 namespace intersection {
 
+Point_t max_poinntt(const Triangle_t &tr) {
+    float x_max = tr.v[0].x;
+    float y_max = tr.v[0].y;
+    float z_max = tr.v[0].z;
+    for (int i = 1; i < 3; ++i) {
+        if (cmp::greater(tr.v[i].x, x_max))
+            x_max = tr.v[i].x;
+        if (cmp::greater(tr.v[i].y, y_max))
+            y_max = tr.v[i].y;
+        if (cmp::greater(tr.v[i].z, z_max))
+            z_max = tr.v[i].z;
+    }
+
+    return Point_t{x_max, y_max, z_max};
+}
+
+Point_t min_poinntt(const Triangle_t &tr) {
+    float x_min = tr.v[0].x;
+    float y_min = tr.v[0].y;
+    float z_min = tr.v[0].z;
+    for (int i = 1; i < 3; ++i) {
+        if (cmp::less(tr.v[i].x, x_min))
+            x_min = tr.v[i].x;
+        if (cmp::less(tr.v[i].y, y_min))
+            y_min = tr.v[i].y;
+        if (cmp::less(tr.v[i].z, z_min))
+            z_min = tr.v[i].z;
+    }
+
+    return Point_t{x_min, y_min, z_min};
+}
+
 //checks if bounding boxes overlap
 /* min and max don't work with initializer_list, it seems that in std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x})
 std::min() is provided with only one argument which is tried to be constructed by Point_t constructor */
 bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
     assert(tr1.valid() && tr2.valid());
-    Point_t Amin{std::min(tr1.v1.x, std::min(tr1.v2.x, tr1.v3.x)), std::min(tr1.v1.y, std::min(tr1.v2.y, tr1.v3.y)), 
-                std::min(tr1.v1.z, std::min(tr1.v2.z, tr1.v3.z))};
-    Point_t Amax{std::max(tr1.v1.x, std::max(tr1.v2.x, tr1.v3.x)), std::max(tr1.v1.y, std::max(tr1.v2.y, tr1.v3.y)), 
-                std::max(tr1.v1.z, std::max(tr1.v2.z, tr1.v3.z))};
-
-    Point_t Bmin{std::min(tr2.v1.x, std::min(tr2.v2.x, tr2.v3.x)), std::min(tr2.v1.y, std::min(tr2.v2.y, tr2.v3.y)), 
-                std::min(tr2.v1.z, std::min(tr2.v2.z, tr2.v3.z))};
-    Point_t Bmax{std::max(tr2.v1.x, std::max(tr2.v2.x, tr2.v3.x)), std::max(tr2.v1.y, std::max(tr2.v2.y, tr2.v3.y)), 
-                std::max(tr2.v1.z, std::max(tr2.v2.z, tr2.v3.z))};
-
-    /* preferrable option
-    Point_t Amin{std::min({tr1.v1.x, tr1.v2.x, tr1.v3.x}), std::min({tr1.v1.y, tr1.v2.y, tr1.v3.y}), 
-                std::min({tr1.v1.z, tr1.v2.z, tr1.v3.z})};
-    Point_t Amax{std::max({tr1.v1.x, tr1.v2.x, tr1.v3.x}), std::max({tr1.v1.y, tr1.v2.y, tr1.v3.y}), 
-                std::max({tr1.v1.z, tr1.v2.z, tr1.v3.z})};
-
-    Point_t Bmin{std::min({tr2.v1.x, tr2.v2.x, tr2.v3.x}), std::min({tr2.v1.y, tr2.v2.y, tr2.v3.y}), 
-                std::min({tr2.v1.z, tr2.v2.z, tr2.v3.z})};
-    Point_t Bmax{std::max({tr2.v1.x, tr2.v2.x, tr2.v3.x}), std::max({tr2.v1.y, tr2.v2.y, tr2.v3.y}), 
-                std::max({tr2.v1.z, tr2.v2.z, tr2.v3.z})};*/
+    Point_t Amin = min_poinntt(tr1);
+    Point_t Amax = max_poinntt(tr1);
+    Point_t Bmin = min_poinntt(tr2);
+    Point_t Bmax = max_poinntt(tr2);
     
     if ((Bmin.x > Amax.x) || (Bmin.y > Amax.y) || (Bmin.z > Amax.z) 
         || (Amin.x > Bmax.x) || (Amin.y > Bmax.y) || (Amin.z >Bmax.z))
@@ -51,7 +67,7 @@ void rotate_TriangleVertices(Triangle_t &tr, int num) {
         Point_t temp = tr.v3;
         tr.v3 = tr.v2;
         tr.v2 = tr.v1;
-        tr.v1 = temp; //hope, assignment works
+        tr.v1 = temp; 
     }
     return;
 }
