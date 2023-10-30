@@ -7,7 +7,7 @@ namespace cmp {
 static float flt_tolerance = 0.00001;
 
 //(a < b) return 1, (a == b) return 0, (a > b) return -1; using relative epsilon comparison
-int float_comparator(float a, float b) {
+inline int float_comparator(float a, float b) {
     auto diff = std::abs(a-b);
 
     if (diff < flt_tolerance)
@@ -20,27 +20,27 @@ int float_comparator(float a, float b) {
         return -1;
 }
 
-bool is_zero(float a) {
+inline bool is_zero(float a) {
     return (float_comparator(a, 0) == 0);    
 }
 
-bool equal(float a, float b) {
+inline bool equal(float a, float b) {
     return (float_comparator(a,b) == 0);
 }
 
-bool greater(float a, float b) {
+inline bool greater(float a, float b) {
     return (float_comparator(a, b) == -1);
 }
 
-bool greater_equal(float a, float b) {
+inline bool greater_equal(float a, float b) {
     return ((float_comparator(a,b) == -1) || (float_comparator(a,b) == 0));
 }
 
-bool less(float a, float b) {
+inline bool less(float a, float b) {
     return (float_comparator(a,b) == 1);
 }
 
-bool less_equal(float a, float b) {
+inline bool less_equal(float a, float b) {
     return ((float_comparator(a,b) == 1) || (float_comparator(a,b) == 0));
 }
 

@@ -8,7 +8,7 @@
 namespace yLab::geometry {
     
 //reads data
-void read_data(std::pair<int, std::vector<double>> &input) {
+inline void read_data(std::pair<int, std::vector<double>> &input) {
     std::cin >> input.first; //number of triangles
     assert(std::cin.good());
 
@@ -21,7 +21,7 @@ void read_data(std::pair<int, std::vector<double>> &input) {
 }
 
 //constructs triangles from given data
-std::vector<Triangle_t> get_triangles (std::pair<int, std::vector<double>> &input) {
+inline std::vector<Triangle_t> get_triangles (std::pair<int, std::vector<double>> &input) {
         std::vector<Triangle_t> triangles;
 
         Point_t v1 {};
@@ -45,7 +45,7 @@ std::vector<Triangle_t> get_triangles (std::pair<int, std::vector<double>> &inpu
         return triangles;
 }
 
-void add_result(int i, int j, std::vector<int> &output, std::unordered_map<int, int> &hash_output) {
+inline void add_result(int i, int j, std::vector<int> &output, std::unordered_map<int, int> &hash_output) {
     if (hash_output.find(i) == hash_output.end()) {
         hash_output.emplace(i, i);
         output.push_back(i);
@@ -58,7 +58,7 @@ void add_result(int i, int j, std::vector<int> &output, std::unordered_map<int, 
 }
 
 //prints numbers of intersecting triangles
-void print_results(std::vector<int> &output) {
+inline void print_results(std::vector<int> &output) {
     auto it_begin = output.begin();
     auto it_end = output.end();
 

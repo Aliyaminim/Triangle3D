@@ -8,7 +8,7 @@ namespace yLab::geometry {
 // |Dx-Ax Dy-Ay Dz-Az|
 // |Dx-Bx Dy-By Dz-Bz|
 // |Dx-Cx Dy-Cy Dz-Cz|
-float determinant3x3(const Point_t &A, const Point_t &B, const Point_t &C, const Point_t &D) {
+inline float determinant3x3(const Point_t &A, const Point_t &B, const Point_t &C, const Point_t &D) {
 	assert(A.valid() && B.valid() && C.valid() && D.valid());
     
 	float det = (D.x - A.x) * ((D.y - B.y)*(D.z - C.z) - (D.z - B.z)*(D.y - C.y));

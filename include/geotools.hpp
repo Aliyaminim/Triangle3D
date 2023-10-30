@@ -11,7 +11,7 @@ namespace yLab::geometry {
 
 namespace intersection {
 
-Point_t max_poinntt(const Triangle_t &tr) {
+inline Point_t max_poinntt(const Triangle_t &tr) {
     float x_max = tr.v[0].x;
     float y_max = tr.v[0].y;
     float z_max = tr.v[0].z;
@@ -27,7 +27,7 @@ Point_t max_poinntt(const Triangle_t &tr) {
     return Point_t{x_max, y_max, z_max};
 }
 
-Point_t min_poinntt(const Triangle_t &tr) {
+inline Point_t min_poinntt(const Triangle_t &tr) {
     float x_min = tr.v[0].x;
     float y_min = tr.v[0].y;
     float z_min = tr.v[0].z;
@@ -44,7 +44,7 @@ Point_t min_poinntt(const Triangle_t &tr) {
 }
 
 //checks if bounding boxes overlap
-bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
+inline bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
     assert(tr1.valid() && tr2.valid());
     Point_t Amin = min_poinntt(tr1);
     Point_t Amax = max_poinntt(tr1);
@@ -59,7 +59,7 @@ bool boundingboxes_overlap(const Triangle_t &tr1, const Triangle_t &tr2) {
 }
 
 // rotates vertices about a given triangle num times preserving the order
-void rotate_TriangleVertices(Triangle_t &tr, int num) {
+inline void rotate_TriangleVertices(Triangle_t &tr, int num) {
     assert(tr.valid());
     for (int j = 0; j < num; j++) {
         Point_t temp = tr.v3;
@@ -71,7 +71,7 @@ void rotate_TriangleVertices(Triangle_t &tr, int num) {
 }
 
 // swaps vertices in triangle to change direction of normal
-void swap_TriangleVertices(Triangle_t &tr) {
+inline void swap_TriangleVertices(Triangle_t &tr) {
     assert(tr.valid());
     Point_t temp = tr.v2;
     tr.v2 = tr.v3;
@@ -82,7 +82,7 @@ void swap_TriangleVertices(Triangle_t &tr) {
 }
 
 //calculates distances between tr1's plane and tr2's vertices considering orientability 
-void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) { 
+inline void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) { 
     assert(tr1.valid() && tr2.valid());
     tr2.vdistance[0] = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v1);
     tr2.vdistance[1] = determinant3x3(tr1.v1, tr1.v2, tr1.v3, tr2.v2);
@@ -90,20 +90,20 @@ void count_vdistance(const Triangle_t &tr1, Triangle_t &tr2) {
 }
 
 //checks if all distances between triangle's vertices and given plane are same signed
-bool allDistSameSigned(const Triangle_t &tr) {
+inline bool allDistSameSigned(const Triangle_t &tr) {
     assert(tr.valid());
     return ((cmp::greater(tr.vdistance[0], 0) && cmp::greater(tr.vdistance[1], 0) && cmp::greater(tr.vdistance[2], 0)) 
         || (cmp::less(tr.vdistance[0], 0) && cmp::less(tr.vdistance[1], 0) && cmp::less(tr.vdistance[2], 0)));
 }
 
 //checks if all distances between triangle's vertices and given plane are zero
-bool allDistZero(const Triangle_t &tr) {
+inline bool allDistZero(const Triangle_t &tr) {
     assert(tr.valid());
     return (cmp::is_zero(tr.vdistance[0]) && cmp::is_zero(tr.vdistance[1]) && cmp::is_zero(tr.vdistance[2]));
 }
 
 //checks if given segment intersects triangle, using method from Geometric tools for Computer Graphics(P.J.Schneider, D.H.Eberly)
-bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
+inline bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
     /* parametric representation of seg = barycentric coordinates of any point in triangle
                             P + t * vec(d) = (1 − (u + v))* V1 + u * V2 + v * V3  */
     assert(tr.valid() && seg.valid());
@@ -148,7 +148,7 @@ bool SegmentTriangleIntersect(const Triangle_t &tr, const Segment_t &seg) {
 }
 
 //checks if any of the segments of second triangle intersects first triangle
-bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &tr2) {
+inline bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &tr2) {
     assert(tr1.valid() && tr2.valid());
     if (SegmentTriangleIntersect(tr1, {tr2.v1, tr2.v2, 1})) 
         return true;
@@ -161,7 +161,7 @@ bool checkAll_SegmentTriangleIntersect(const Triangle_t &tr1, const Triangle_t &
 }
 
 //checks if intersection occurs between given edges
-bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a2, const Point_t &b2) {
+inline bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a2, const Point_t &b2) {
     Line_t a1b1{a1, b1, 0};
     Line_t a2b2{a2, b2, 0};
 
@@ -186,7 +186,7 @@ bool edgeEdgeIntersection(const Point_t &a1, const Point_t &b1, const Point_t &a
 }
 
 // checks if vertix lies within a coplanar triangle
-bool vertixliesWithincoplanarTriangle(const Point_t &vertix, const Triangle_t &tr) {
+inline bool vertixliesWithincoplanarTriangle(const Point_t &vertix, const Triangle_t &tr) {
     assert(vertix.valid() && tr.valid());			
     Line_t a1b1{tr.v1, tr.v2, 0};
     Line_t b1c1{tr.v2, tr.v3, 0};
@@ -212,7 +212,7 @@ bool vertixliesWithincoplanarTriangle(const Point_t &vertix, const Triangle_t &t
 }
 
 //checks if intersection occurs between coplanar triangles
-bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Triangle_t &tr2) {
+inline bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Triangle_t &tr2) {
     //test if any tr1 edges cross tr2 edges
     assert(tr1.valid() && tr2.valid());
 
@@ -233,7 +233,7 @@ bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Triangle_t
 
 
 //looks up if intersection between two triangles happens
-bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
+inline bool lookup_intersection(Triangle_t &tr1, Triangle_t &tr2) {
     assert(tr1.valid() && tr2.valid());
     if (!boundingboxes_overlap(tr1, tr2))
         return false; //no intersection
