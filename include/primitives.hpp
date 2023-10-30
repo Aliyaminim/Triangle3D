@@ -129,20 +129,37 @@ class Triangle_t {
     }
 public:
     Point_t v1, v2, v3; 
-    std::array<Point_t, 3> v;
     Line_t normal{};
     std::array<float, 3> vdistance; //contains distances between this vertices and other triangle's plane
 
     //constructor
     Triangle_t(const Point_t &v1_, const Point_t &v2_, const Point_t &v3_) : v1(v1_), v2(v2_),
                                                                              v3(v3_) {    
-        v[0] = v1;
-        v[1] = v2;
-        v[2] = v3;
         getNormal(v1_, v2_, v3_);
     }
 
     bool valid() const { return (v1.valid() && v2.valid() && v3.valid());}
+
+    Point_t& operator[](int index) {
+        assert((index >= 0) && (index < 3) && "Invalid index");
+        if (index == 0)
+            return v1;
+        else if (index == 1)
+            return v2;
+        else 
+            return v3;
+    }
+
+    const Point_t& operator[](int index) const {
+        assert((index >= 0) && (index < 3) && "Invalid index");
+
+        if (index == 0)
+            return v1;
+        else if (index == 1)
+            return v2;
+        else 
+            return v3;
+    }
 };
 
 }

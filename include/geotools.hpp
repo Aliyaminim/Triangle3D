@@ -12,32 +12,32 @@ namespace yLab::geometry {
 namespace intersection {
 
 inline Point_t max_poinntt(const Triangle_t &tr) {
-    float x_max = tr.v[0].x;
-    float y_max = tr.v[0].y;
-    float z_max = tr.v[0].z;
+    float x_max = tr[0].x;
+    float y_max = tr[0].y;
+    float z_max = tr[0].z;
     for (int i = 1; i < 3; ++i) {
-        if (cmp::greater(tr.v[i].x, x_max))
-            x_max = tr.v[i].x;
-        if (cmp::greater(tr.v[i].y, y_max))
-            y_max = tr.v[i].y;
-        if (cmp::greater(tr.v[i].z, z_max))
-            z_max = tr.v[i].z;
+        if (cmp::greater(tr[i].x, x_max))
+            x_max = tr[i].x;
+        if (cmp::greater(tr[i].y, y_max))
+            y_max = tr[i].y;
+        if (cmp::greater(tr[i].z, z_max))
+            z_max = tr[i].z;
     }
 
     return Point_t{x_max, y_max, z_max};
 }
 
 inline Point_t min_poinntt(const Triangle_t &tr) {
-    float x_min = tr.v[0].x;
-    float y_min = tr.v[0].y;
-    float z_min = tr.v[0].z;
+    float x_min = tr[0].x;
+    float y_min = tr[0].y;
+    float z_min = tr[0].z;
     for (int i = 1; i < 3; ++i) {
-        if (cmp::less(tr.v[i].x, x_min))
-            x_min = tr.v[i].x;
-        if (cmp::less(tr.v[i].y, y_min))
-            y_min = tr.v[i].y;
-        if (cmp::less(tr.v[i].z, z_min))
-            z_min = tr.v[i].z;
+        if (cmp::less(tr[i].x, x_min))
+            x_min = tr[i].x;
+        if (cmp::less(tr[i].y, y_min))
+            y_min = tr[i].y;
+        if (cmp::less(tr[i].z, z_min))
+            z_min = tr[i].z;
     }
 
     return Point_t{x_min, y_min, z_min};
@@ -220,7 +220,7 @@ inline bool find_intersection_coplanarTriangles(const Triangle_t &tr1, const Tri
         for (int j = i + 1; j < 3; ++j) 
             for (int k = 0; k < 2; ++k) 
                 for (int m = k + 1; m < 3; ++m) 
-                    if (edgeEdgeIntersection(tr1.v[i], tr1.v[j], tr2.v[k], tr2.v[m]))
+                    if (edgeEdgeIntersection(tr1[i], tr1[j], tr2[k], tr2[m]))
                         return 1;
 
     if (vertixliesWithincoplanarTriangle(tr1.v1, tr2))
