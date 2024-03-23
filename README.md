@@ -1,15 +1,26 @@
-# Triangles
-Project name: Triangle Intersection in 3D Space
+# Triangle Intersection in 3D Space
+## Task
 
-Contributors: Minimullina Aliya
+The standard input provides a number 0 < N < 1000000, followed by N sets of points representing three-dimensional triangles.
+Goal: output the numbers of all triangles that intersect with any other.
 
-To install and run the code, follow these steps:
-  1. git clone https://github.com/Aliyaminim/Triangles
-  2. cd Triangles
-  3. bash run.sh
-  4. cd test
-  5. bash testing.sh
+## How to build
+```bash
+git clone https://github.com/Aliyaminim/Triangle3D.git
+cd Triangle3D
+cmake -S ./ -B build/
+cd build/
+cmake --build .
+```
 
-HW3D:
-Со стандартного ввода приходит число 0 < N < 1000000, а потом N наборов точек, представляющих трёхмерные треугольники. 
-Задача: вывести номера всех треугольников, которые пересекаются с каким-либо другим.
+## How to run the program
+```bash
+./main < [file]
+```
+
+## How to test the program
+```bash
+cd ../test
+bash testing.sh
+```
+
